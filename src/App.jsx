@@ -38,7 +38,7 @@ export default function App() {
   async function connect() {
     if (!window.ethereum) return setMsg("Install MetaMask first.");
     const [addr] = await window.ethereum.request({ method: "eth_requestAccounts" });
-    writer.current = createClient({ chain: testnetBradbury, account: addr });
+    writer.current = createClient({ chain: testnetBradbury, account: addr, provider: window.ethereum });
     try { await writer.current.connect("testnetBradbury"); } catch (e) {}
     setAccount(addr);
   }
