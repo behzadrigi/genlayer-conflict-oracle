@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "genlayer-js";
-import { testnetBradbury } from "genlayer-js/chains";
+import { studionet } from "genlayer-js/chains";
 
 const CONTRACT =
   import.meta.env.VITE_CONTRACT_ADDRESS ||
-  "0x604fF0b501Fb934AD77dA25DD4a7f0617e540Fb6";
-const reader = createClient({ chain: testnetBradbury });
+  "0x501b8e39c843306F77d0C24FD9b9015394F0DD00";
+const reader = createClient({ chain: studionet });
 
 export default function App() {
   const writer = useRef(null);
@@ -38,9 +38,14 @@ export default function App() {
   async function connect() {
     if (!window.ethereum) return setMsg("Install MetaMask first.");
     const [addr] = await window.ethereum.request({ method: "eth_requestAccounts" });
-    writer.current = createClient({ chain: testnetBradbury, account: addr, provider: window.ethereum });
-    try { await writer.current.connect("testnetBradbury"); } catch (e) {}
+    writer.current = createClient({
+      chain: studionet,
+      account: addr,
+      provider: window.ethereum,
+    });
+    try { await writer.current.connect("studionet"); } catch (e) {}
     setAccount(addr);
+    setMsg("Wallet connected.");
   }
 
   async function send(fn, args, precheck) {
@@ -69,7 +74,7 @@ export default function App() {
     }
   }
 
-  // Pre-checks use free reads so failing (expensive) transactions are never sent.
+  // Pre-checks use free reads so failing transactions are never sent.
   const needOpen = async () => {
     const c = await loadCase(caseId);
     return c.status !== "OPEN" ? "This case is already resolved." : "";
@@ -105,7 +110,7 @@ export default function App() {
       <div className="card">
         {account ? <div className="mono">Connected: {account}</div>
           : <button onClick={connect}>Connect wallet</button>}
-        <div className="mono">Contract: {CONTRACT} · Cases: {count}</div>
+        <div className="mono">Network: GenLayer Studio · Contract: {CONTRACT} · Cases: {count}</div>
         <div className="msg">{msg}</div>
       </div>
 
